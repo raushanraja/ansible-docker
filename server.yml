@@ -1,0 +1,40 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Get Uname -s
+      shell: uname -s
+      register: uname_s_result
+    - name: Get -m
+      shell: uname -m
+      register: uname_m_result
+    - name: Get -n
+      shell: lsb_release -c | cut -f 2-
+      register: uname_n_result 
+    - name: Install  GPG Related packages
+      apt:
+        update_cache: yes
+        name:
+          - ca-certificates
+          - curl
+          - debian-keyring
+          - debian-archive-keyring
+          - apt-transport-https
+          - tmux
+        state: present
+    - name: Add Docker Public Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+    - name: Add Docker Repo
+      apt_repository:
+        repo: "deb  https://download.docker.com/linux/ubuntu {{uname_n_result.stdout}} stable"
+        state: present
+    - name: Install Docker
+      apt:
+        update_cache: yes
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin 
+          - docker-compose-plugin
