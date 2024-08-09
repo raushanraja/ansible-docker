@@ -6,6 +6,11 @@
 vagrant up
 ```
 
+## Run ansible playbook
+```bash
+ansible-playbook -i hosts server.yml
+```
+
 ## Hosts
 ```
 [localhost]
